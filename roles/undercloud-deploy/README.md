@@ -97,6 +97,10 @@ http://docs.openstack.org/developer/tripleo-quickstart/accessing-libvirt.html
   downloaded ansible configs and processed heat templates for heat installer
 - `undercloud_undercloud_cleanup`: <null> -- controls tear down of the processed heat templates
   in the output directory for heat installer
+- `download_undercloud_templates_rpm`: if set to true, allow the user to
+  download a tripleo-heat-templates rpm package from a url defined by the
+  variable `tht_rpm_url`
+- `undercloud_templates_path`: location of undercloud templates, by default undefined
 
 Role Network Variables
 ----------------------
@@ -199,8 +203,8 @@ branch. To do so, override the custom t-h-t repo and branch/refspec
 for t-h-t templates to be fetched, for example:
 
 ```yaml
-overcloud_templates_repo: https://github.com/johndoe/tripleo-heat-templates
-overcloud_templates_branch: dev
+undercloud_templates_repo: https://github.com/johndoe/tripleo-heat-templates
+undercloud_templates_branch: dev
 ```
 
 Note, these vars are shared with the overcloud role vars and point to
@@ -230,12 +234,12 @@ the ephemeral undercloud heat agent running for debug purposes:
 
 ```yaml
 undercloud_extra_services_args: >-
-  -e {{overcloud_templates_path}}/environments/disable-telemetry.yaml
-  -e {{overcloud_templates_path}}/environments/docker-minimal.yaml
-  -e {{overcloud_templates_path}}/environments/services-docker/etcd.yaml
-  -e {{overcloud_templates_path}}/environments/services/octavia.yaml
-  -e {{overcloud_templates_path}}/environments/debug.yaml
-  -e {{overcloud_templates_path}}/environments/config-debug.yaml
+  -e {{undercloud_templates_path}}/environments/disable-telemetry.yaml
+  -e {{undercloud_templates_path}}/environments/docker-minimal.yaml
+  -e {{undercloud_templates_path}}/environments/services-docker/etcd.yaml
+  -e {{undercloud_templates_path}}/environments/services/octavia.yaml
+  -e {{undercloud_templates_path}}/environments/debug.yaml
+  -e {{undercloud_templates_path}}/environments/config-debug.yaml
 undercloud_extra_args: >-
   --timeout 60
   --keep-running
@@ -267,7 +271,7 @@ undercloud installation script template omits those services and the
 
 Also note, if you want to override the undercloud roles data, you should
 provide a custom roles file and put it in place of the default
-`./roles_data_undercloud.yaml` by the given ``overcloud_templates_path``.
+`./roles_data_undercloud.yaml` by the given ``undercloud_templates_path``.
 This can be done with a ``cp`` command in the custom undercloud deploy
 script. For the example above, custom undercloud roles may look like:
 
@@ -300,12 +304,12 @@ And an example playbook to call the role is:
     overcloud_templates_repo: https://github.com/johndoe/tripleo-heat-templates
     overcloud_templates_branch: dev
     undercloud_extra_services_args: >-
-      -e {{overcloud_templates_path}}/environments/disable-telemetry.yaml
-      -e {{overcloud_templates_path}}/environments/docker-minimal.yaml
-      -e {{overcloud_templates_path}}/environments/services-docker/etcd.yaml
-      -e {{overcloud_templates_path}}/environments/services/octavia.yaml
-      -e {{overcloud_templates_path}}/environments/debug.yaml
-      -e {{overcloud_templates_path}}/environments/config-debug.yaml
+      -e {{undercloud_templates_path}}/environments/disable-telemetry.yaml
+      -e {{undercloud_templates_path}}/environments/docker-minimal.yaml
+      -e {{undercloud_templates_path}}/environments/services-docker/etcd.yaml
+      -e {{undercloud_templates_path}}/environments/services/octavia.yaml
+      -e {{undercloud_templates_path}}/environments/debug.yaml
+      -e {{undercloud_templates_path}}/environments/config-debug.yaml
     undercloud_extra_args: >-
       --timeout 60
       --keep-running

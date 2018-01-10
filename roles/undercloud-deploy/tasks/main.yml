@@ -12,6 +12,10 @@
     - undercloud-scripts
   when: containerized_undercloud|bool
 
+- include: undercloud_custom_tht.yml
+  tags:
+    - undercloud-install
+
 - include: install-undercloud.yml
   tags:
     - undercloud-install

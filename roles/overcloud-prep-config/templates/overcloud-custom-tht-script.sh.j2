@@ -16,7 +16,6 @@ set -eux
 ## ::
 
 sudo rm -rf {{ overcloud_templates_path }}
-chmod 755 $HOME
 rm -rf {{ working_dir }}/tripleo-heat-templates
 git clone {% if overcloud_templates_branch is defined %}-b {{ overcloud_templates_branch }} \
     --single-branch{% endif %} {{ overcloud_templates_repo }} {{ working_dir }}/tripleo-heat-templates

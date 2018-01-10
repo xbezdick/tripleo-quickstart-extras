@@ -1,0 +1,77 @@
+#!/bin/bash
+
+set -eux
+
+### --start_docs
+## --------------------------------------------------
+## Checkout custom tripleo heat templates
+## --------------------------------------------------
+
+## ########################
+## Prepare Your Environment
+## ########################
+
+{% if undercloud_templates_path is defined and overcloud_templates_path != undercloud_templates_path %}
+
+{% if undercloud_templates_repo is defined %}
+## * Clone the t-h-t templates if needed.
+## ::
+
+sudo rm -rf {{ undercloud_templates_path }}
+rm -rf {{ working_dir }}/undercloud-tripleo-heat-templates
+git clone {% if undercloud_templates_branch is defined %}-b {{ undercloud_templates_branch }} \
+    --single-branch{% endif %} {{ undercloud_templates_repo }} {{ working_dir }}/undercloud-tripleo-heat-templates
+sudo ln -s {{ working_dir }}/undercloud-tripleo-heat-templates {{ undercloud_templates_path }}
+
+{% if undercloud_templates_refspec is defined %}
+## * Checkout an open t-h-t review if specified
+##    (this will stomp on the undercloud_templates_branch, so only one should be used).
+## ::
+
+pushd {{ working_dir }}/undercloud-tripleo-heat-templates
+git fetch {{ undercloud_templates_repo }} {{ undercloud_templates_refspec }} && git checkout FETCH_HEAD
+popd
+{% endif %}
+
+{% if not composable_scenario|trim == '' %}
+## * If desired composable scenario isn't present in the checked-out
+##   code, but is present in RPM, copy the scenario from RPM location.
+## ::
+if [ ! -e "{{ undercloud_templates_path }}/ci/environments/{{ composable_scenario }}" \
+    -a -e "/usr/share/openstack-tripleo-heat-templates/ci/environments/{{ composable_scenario }}" ]; then
+    cp "/usr/share/openstack-tripleo-heat-templates/ci/environments/{{ composable_scenario }}" \
+        "{{ undercloud_templates_path }}/ci/environments/{{ composable_scenario }}"
+fi
+{% endif %}
+{% if not upgrade_composable_scenario|trim == '' %}
+if [ ! -e "{{ undercloud_templates_path }}/ci/environments/{{ upgrade_composable_scenario }}" \
+    -a -e "/usr/share/openstack-tripleo-heat-templates/ci/environments/{{ upgrade_composable_scenario }}" ]; then
+    cp "/usr/share/openstack-tripleo-heat-templates/ci/environments/{{ upgrade_composable_scenario }}" \
+        "{{ undercloud_templates_path }}/ci/environments/{{ upgrade_composable_scenario }}"
+fi
+{% endif %}
+
+{% endif %}
+
+{% if download_undercloud_templates_rpm is defined and undercloud_templates_path is defined %}
+## * Download the t-h-t package.
+## ::
+rm -rf downloaded-tht-rpm
+rm -rf {{ undercloud_templates_path }}
+mkdir {{ working_dir }}/downloaded-tht-rpm
+pushd {{ working_dir }}/downloaded-tht-rpm
+
+undercloud_tht_rpm_name=$(curl {{ undercloud_tht_rpm_url }} | grep "openstack-tripleo-heat-templates" | grep "noarch.rpm" | grep -v "tripleo-heat-templates-compat" | sed "s/^.*>openstack-tripleo-heat-templates/openstack-tripleo-heat-templates/" | cut -d "<" -f1)
+curl -o {{ working_dir }}/downloaded-tht-rpm/$undercloud_tht_rpm_name {{ undercloud_tht_rpm_url }}/$underclout_tht_rpm_name
+
+## * Unpack tht sources
+## ::
+
+rpm2cpio $(ls -1 *.rpm | grep $undercloud_tht_rpm_name) | cpio -ivdm
+cp -R usr/share/openstack-tripleo-heat-templates {{ undercloud_templates_path }}
+popd
+{% endif %}
+
+{% endif %}
+
+### --stop_docs

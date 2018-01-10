@@ -20,6 +20,6 @@ export CONTROLLER_HOSTS="{{deployed_server_overcloud_roles|map(attribute='hosts'
 {{ get_occ_config_script }} 2>&1 | sudo dd of=/var/log/deployed-server-os-collect-config.log
 
 # We also do not have the deployed-server-enable-ssh-admin script on newton.
-{% if release != "newton" %}
+{% if overcloud_release != "newton" %}
 /usr/share/openstack-tripleo-heat-templates/deployed-server/scripts/enable-ssh-admin.sh 2>&1 | sudo dd of=/var/log/deployed-server-enable-ssh-admin.log
 {% endif %}

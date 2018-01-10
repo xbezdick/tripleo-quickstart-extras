@@ -11,7 +11,7 @@ extra_args: >-
 # in order to reduce the overall memory footprint
 # This is not required in newton
 telemetry_args: >-
-   {% if release != 'newton' %}
+   {% if overcloud_release != 'newton' %}
    -e {{ overcloud_templates_path }}/environments/disable-telemetry.yaml
    {% endif %}
 

@@ -37,7 +37,7 @@ undercloud_local_ip={{ hostvars['undercloud'].undercloud_ip }}
 
 sudo openstack undercloud deploy \
     --heat-native \
-    --templates={{overcloud_templates_path}} \
+    --templates={{undercloud_templates_path}} \
     --local-ip=$undercloud_local_ip \
 {% if undercloud_cloud_domain is defined %}
     --local-domain={{ undercloud_cloud_domain }} \

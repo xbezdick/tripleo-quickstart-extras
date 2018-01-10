@@ -32,5 +32,5 @@
       cert_filename: "{{ working_dir }}/server-cert.pem"
       cert_ca_filename: "{{ working_dir }}/overcloud-cacert.pem"
       key_filename: "{{ working_dir }}/server-key.pem"
-      tht_release: '{{ release }}'
+      tht_release: '{{ overcloud_release }}'
   when: ssl_overcloud|bool or undercloud_generate_service_certificate|bool
