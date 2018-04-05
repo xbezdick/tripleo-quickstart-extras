@@ -92,8 +92,5 @@ artcl_create_docs_payload:
     - delete-node
     - overcloud-validate
 
-# Path to tripleo-heat-templates
-overcloud_templates_path: /usr/share/openstack-tripleo-heat-templates
-
 # Sample call
 # ./deploy.sh -v --playbook scale_nodes --config-file config/scale/scale_compute.yml
